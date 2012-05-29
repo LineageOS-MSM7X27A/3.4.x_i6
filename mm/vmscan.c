@@ -2521,13 +2521,8 @@ loop_again:
 			if (!populated_zone(zone))
 				continue;
 
-<<<<<<< HEAD
-			if (zone->all_unreclaimable &&
-			    sc.priority != DEF_PRIORITY)
-=======
-			if (priority != DEF_PRIORITY &&
+			if (sc.priority != DEF_PRIORITY &&
 			    !zone_reclaimable(zone))
->>>>>>> 143b51f... mm: vmscan: fix do_try_to_free_pages() livelock
 				continue;
 
 			/*
@@ -2581,13 +2576,8 @@ loop_again:
 			if (!populated_zone(zone))
 				continue;
 
-<<<<<<< HEAD
-			if (zone->all_unreclaimable &&
-			    sc.priority != DEF_PRIORITY)
-=======
-			if (priority != DEF_PRIORITY &&
+			if (sc.priority != DEF_PRIORITY &&
 			    !zone_reclaimable(zone))
->>>>>>> 143b51f... mm: vmscan: fix do_try_to_free_pages() livelock
 				continue;
 
 			sc.nr_scanned = 0;
@@ -2749,25 +2739,6 @@ out:
 			if (!populated_zone(zone))
 				continue;
 
-<<<<<<< HEAD
-=======
-			if (priority != DEF_PRIORITY &&
-				!zone_reclaimable(zone))
-				continue;
-
-			/* Would compaction fail due to lack of free memory? */
-			if (COMPACTION_BUILD &&
-			    compaction_suitable(zone, order) == COMPACT_SKIPPED)
-				goto loop_again;
-
-			/* Confirm the zone is balanced for order-0 */
-			if (!zone_watermark_ok(zone, 0,
-					high_wmark_pages(zone), 0, 0)) {
-				order = sc.order = 0;
-				goto loop_again;
-			}
-
->>>>>>> 143b51f... mm: vmscan: fix do_try_to_free_pages() livelock
 			/* Check if the memory needs to be defragmented. */
 			if (zone_watermark_ok(zone, order,
 				    low_wmark_pages(zone), *classzone_idx, 0))
