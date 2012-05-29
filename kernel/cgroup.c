@@ -4920,7 +4920,6 @@ bool css_is_ancestor(struct cgroup_subsys_state *child,
 	child_id  = rcu_dereference(child->id);
 	if (!child_id)
 		return false;
-
 	root_id = rcu_dereference(root->id);
 	if (!root_id)
 		return false;
