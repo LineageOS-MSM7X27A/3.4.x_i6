@@ -1699,8 +1699,11 @@ long do_io_submit(aio_context_t ctx_id, long nr,
 
 	kiocb_batch_init(&batch, nr);
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> b415a4c... fs: Asynchronous I/O latency to a solid-state disk greatly increased
 	/*
 	 * AKPM: should this return a partial result if some of the IOs were
 	 * successfully submitted?
@@ -1723,7 +1726,10 @@ long do_io_submit(aio_context_t ctx_id, long nr,
 		if (ret)
 			break;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> b415a4c... fs: Asynchronous I/O latency to a solid-state disk greatly increased
 
 	kiocb_batch_free(ctx, &batch);
 	put_ioctx(ctx);
