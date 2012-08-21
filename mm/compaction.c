@@ -230,6 +230,47 @@ static bool suitable_migration_target(struct page *page)
 }
 
 /*
+ * Compaction requires the taking of some coarse locks that are potentially
+ * very heavily contended. Check if the process needs to be scheduled or
+ * if the lock is contended. For async compaction, back out in the event
+ * if contention is severe. For sync compaction, schedule.
+ *
+ * Returns true if the lock is held.
+ * Returns false if the lock is released and compaction should abort
+ */
+static bool compact_checklock_irqsave(spinlock_t *lock, unsigned long *flags,
+				      bool locked, struct compact_control *cc)
+{
+	if (need_resched() || spin_is_contended(lock)) {
+		if (locked) {
+			spin_unlock_irqrestore(lock, *flags);
+			locked = false;
+		}
+
+		/* async aborts if taking too long or contended */
+		if (!cc->sync) {
+			if (cc->contended)
+				*cc->contended = true;
+			return false;
+		}
+
+		cond_resched();
+		if (fatal_signal_pending(current))
+			return false;
+	}
+
+	if (!locked)
+		spin_lock_irqsave(lock, *flags);
+	return true;
+}
+
+static inline bool compact_trylock_irqsave(spinlock_t *lock,
+			unsigned long *flags, struct compact_control *cc)
+{
+	return compact_checklock_irqsave(lock, flags, false, cc);
+}
+
+/*
  * Isolate free pages onto a private freelist. Caller must hold zone->lock.
  * If @strict is true, will abort returning 0 on any invalid PFNs or non-free
  * pages inside of the pageblock (even though it may still end up isolating
@@ -996,6 +1037,7 @@ static unsigned long compact_zone_order(struct zone *zone,
 		.migratetype = allocflags_to_migratetype(gfp_mask),
 		.zone = zone,
 		.sync = sync,
+		.contended = contended,
 	};
 	INIT_LIST_HEAD(&cc.freepages);
 	INIT_LIST_HEAD(&cc.migratepages);
