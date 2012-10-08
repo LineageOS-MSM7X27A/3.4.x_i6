@@ -1494,9 +1494,16 @@ int split_free_page(struct page *page)
 	unsigned int order;
 	int nr_pages;
 
+<<<<<<< HEAD
 	order = page_order(page);
 
 	nr_pages = __isolate_free_page(page, order);
+=======
+	BUG_ON(!PageBuddy(page));
+	order = page_order(page);
+
+	nr_pages = capture_free_page(page, order, 0);
+>>>>>>> 6d16098... mm: compaction: capture a suitable high-order page immediately when it is made available
 	if (!nr_pages)
 		return 0;
 
@@ -2174,7 +2181,7 @@ __alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
 	current->flags |= PF_MEMALLOC;
 	*did_some_progress = try_to_compact_pages(zonelist, order, gfp_mask,
 						nodemask, sync_migration,
-						contended_compaction);
+						contended_compaction, &page);
 	current->flags &= ~PF_MEMALLOC;
 
 	if (*did_some_progress != COMPACT_SKIPPED) {
