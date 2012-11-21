@@ -41,14 +41,14 @@ struct seq_file;
  *			 -1 if a will signabl before b
  * @free_pt:		called before sync_pt is freed
  * @release_obj:	called before sync_timeline is freed
- * @print_obj:		print aditional debug information about sync_timeline.
- *			  should not print a newline
- * @print_pt:		print aditional debug information about sync_pt.
- *			  should not print a newline
+ * @print_obj:		deprecated
+ * @print_pt:		deprecated
  * @fill_driver_data:	write implmentation specific driver data to data.
  *			  should return an error if there is not enough room
  *			  as specified by size.  This information is returned
  *			  to userspace by SYNC_IOC_FENCE_INFO.
+ * @timeline_value_str: fill str with the value of the sync_timeline's counter
+ * @pt_value_str:	fill str with the value of the sync_pt
  */
 struct sync_timeline_ops {
 	const char *driver_name;
@@ -68,11 +68,11 @@ struct sync_timeline_ops {
 	/* optional */
 	void (*release_obj)(struct sync_timeline *sync_timeline);
 
-	/* optional */
+	/* deprecated */
 	void (*print_obj)(struct seq_file *s,
 			  struct sync_timeline *sync_timeline);
 
-	/* optional */
+	/* deprecated */
 	void (*print_pt)(struct seq_file *s, struct sync_pt *sync_pt);
 
 	/* optional */
@@ -84,11 +84,11 @@ struct sync_timeline_ops {
 
 	/* optional */
 	void (*pt_value_str)(struct sync_pt *pt, char *str, int size);
-
 };
 
 /**
  * struct sync_timeline - sync object
+ * @kref:		reference count on fence.
  * @ops:		ops that define the implementaiton of the sync_timeline
  * @name:		name of the sync_timeline. Useful for debugging
  * @destoryed:		set when sync_timeline is destroyed
@@ -120,6 +120,7 @@ struct sync_timeline {
  * @parent:		sync_timeline to which this sync_pt belongs
  * @child_list:		membership in sync_timeline.child_list_head
  * @active_list:	membership in sync_timeline.active_list_head
+ * @signaled_list:	membership in temorary signaled_list on stack
  * @fence:		sync_fence to which the sync_pt belongs
  * @pt_list:		membership in sync_fence.pt_list_head
  * @status:		1: signaled, 0:active, <0: error
@@ -132,6 +133,7 @@ struct sync_pt {
 
 	struct list_head	signaled_list;
 	struct list_head	active_list;
+	struct list_head	signaled_list;
 
 	struct sync_fence	*fence;
 	struct list_head	pt_list;
@@ -145,6 +147,7 @@ struct sync_pt {
 /**
  * struct sync_fence - sync fence
  * @file:		file representing this fence
+ * @kref:		referenace count on fence.
  * @name:		name of sync_fence.  Useful for debugging
  * @pt_list_head:	list of sync_pts in ths fence.  immutable once fence
  *			  is created
@@ -344,8 +347,8 @@ int sync_fence_cancel_async(struct sync_fence *fence,
  * @fence:	fence to wait on
  * @tiemout:	timeout in ms
  *
- * Wait for @fence to be signaled or have an error.  Waits indefintly
- * if @timeout = 0
+ * Wait for @fence to be signaled or have an error.  Waits indefinitely
+ * if @timeout < 0
  */
 int sync_fence_wait(struct sync_fence *fence, long timeout);
 
@@ -404,7 +407,7 @@ struct sync_fence_info_data {
 /**
  * DOC: SYNC_IOC_WAIT - wait for a fence to signal
  *
- * pass timeout in milliseconds.
+ * pass timeout in milliseconds.  Waits indefinitely timeout < 0.
  */
 #define SYNC_IOC_WAIT		_IOW(SYNC_IOC_MAGIC, 0, __s32)
 
