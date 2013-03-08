@@ -1469,6 +1469,7 @@ static void _ablk_cipher_ce_out_call_back(struct msm_dmov_cmd *cmd_ptr,
 	}
 };
 
+
 static int _setup_cmd_template(struct qce_device *pce_dev)
 {
 	dmov_sg *pcmd;
@@ -2062,8 +2063,7 @@ int qce_ablk_cipher_req(void *handle, struct qce_req *c_req)
 	/* cipher output      */
 	if (areq->src != areq->dst) {
 		pce_dev->dst_nents = count_sg(areq->dst, areq->nbytes);
-		if (c_req->use_pmem != 1)
-			dma_map_sg(pce_dev->pdev, areq->dst, pce_dev->dst_nents,
+		qce_dma_map_sg(pce_dev->pdev, areq->dst,
 							DMA_FROM_DEVICE);
 	};
 	if (_chain_sg_buffer_out(pce_dev, areq->dst, areq->nbytes) < 0) {
@@ -2105,7 +2105,6 @@ int qce_ablk_cipher_req(void *handle, struct qce_req *c_req)
 					_ablk_cipher_ce_in_call_back;
 	pce_dev->chan_ce_out_cmd->complete_func =
 					_ablk_cipher_ce_out_call_back;
-	}
 	rc = _qce_start_dma(pce_dev, true, true);
 
 	if (rc == 0)

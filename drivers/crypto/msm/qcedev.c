@@ -12,6 +12,7 @@
  * GNU General Public License for more details.
  */
 #include <linux/mman.h>
+
 #include <linux/types.h>
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
@@ -453,14 +454,12 @@ static int start_cipher_req(struct qcedev_control *podev)
 
 	/* start the command on the podev->active_command */
 	qcedev_areq = podev->active_command;
-
 	qcedev_areq->cipher_req.cookie = qcedev_areq->handle;
 	if (qcedev_areq->cipher_op_req.use_pmem == QCEDEV_USE_PMEM) {
 		pr_err("%s: Use of PMEM is not supported\n", __func__);
 		goto unsupported;
 	}
 	creq.pmem = NULL;
-
 	switch (qcedev_areq->cipher_op_req.alg) {
 	case QCEDEV_ALG_DES:
 		creq.alg = CIPHER_ALG_DES;
@@ -1655,7 +1654,6 @@ static long qcedev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
 				podev))
 			return -EINVAL;
 
-		if (qcedev_areq.cipher_op_req.use_pmem)
 		err = qcedev_vbuf_ablk_cipher(&qcedev_areq, handle);
 		if (err)
 			return err;
