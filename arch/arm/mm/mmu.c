@@ -1322,9 +1322,12 @@ void mem_text_write_kernel_word(unsigned long *addr, unsigned long word)
 }
 EXPORT_SYMBOL(mem_text_write_kernel_word);
 
+<<<<<<< HEAD
 extern char __init_data[];
 volatile  __section(.log.data) int reserved_area = 0;
 
+=======
+>>>>>>> 68baeb7... msm: Make CONFIG_STRICT_MEMORY_RWX even stricter
 static void __init map_lowmem(void)
 {
 	struct memblock_region *reg;
@@ -1360,7 +1363,7 @@ static void __init map_lowmem(void)
 #ifdef CONFIG_STRICT_MEMORY_RWX
 		if (start <= __pa(_text) && __pa(_text) < end) {
 			map.length = SECTION_SIZE;
-			map.type = MT_MEMORY;
+			map.type = MT_MEMORY_RW;
 
 			create_mapping(&map, false);
 
@@ -1380,8 +1383,8 @@ static void __init map_lowmem(void)
 
 			map.pfn = __phys_to_pfn(__pa(__init_begin));
 			map.virtual = (unsigned long)__init_begin;
-			map.length = __init_data - __init_begin;
-			map.type = MT_MEMORY;
+			map.length = (char *)__arch_info_begin - __init_begin;
+			map.type = MT_MEMORY_RX;
 
 			create_mapping(&map, false);
 #ifdef CONFIG_UNCACHED_BUF
@@ -1390,25 +1393,11 @@ static void __init map_lowmem(void)
 			map.length = uncached_start - (unsigned int)__init_data;
 			map.type = MT_MEMORY_RW;
 
-			create_mapping(&map, false);
-
-			map.pfn = __phys_to_pfn(__virt_to_phys(uncached_start));
-			map.virtual = uncached_start;
-			map.length = uncached_size;
-			map.type = MT_DEVICE;
-
-			create_mapping(&map, false);
-
-			map.pfn = __phys_to_pfn(__virt_to_phys(uncached_end));
-			map.virtual = uncached_end;
-			map.length = end - __virt_to_phys(uncached_end);
+			map.pfn = __phys_to_pfn(__pa(__arch_info_begin));
+			map.virtual = (unsigned long)__arch_info_begin;
+			map.length = __phys_to_virt(end) -
+				(unsigned long)__arch_info_begin;
 			map.type = MT_MEMORY_RW;
-#else
-			map.pfn = __phys_to_pfn(__pa(__init_data));
-			map.virtual = (unsigned long)__init_data;
-			map.length = __phys_to_virt(end) - (unsigned int)__init_data;
-			map.type = MT_MEMORY_RW;
-#endif
 		} else {
 			map.length = end - start;
 			map.type = MT_MEMORY_RW;
