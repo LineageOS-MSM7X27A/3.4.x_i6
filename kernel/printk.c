@@ -118,7 +118,6 @@ static DEFINE_RAW_SPINLOCK(logbuf_lock);
  */
 static unsigned log_start;	/* Index into log_buf: next char to be read by syslog() */
 static unsigned con_start;	/* Index into log_buf: next char to be sent to consoles */
-static unsigned dev_start;	/* Index into log_buf: next char to be read by /dev/kmsg */
 static unsigned log_end;	/* Index into log_buf: most-recently-written-char + 1 */
 
 /*
@@ -152,7 +151,7 @@ static int console_may_schedule;
 
 #ifdef CONFIG_PRINTK
 
-char __log_buf[__LOG_BUF_LEN];
+static char __log_buf[__LOG_BUF_LEN];
 static char *log_buf = __log_buf;
 static int log_buf_len = __LOG_BUF_LEN;
 static unsigned logged_chars; /* Number of chars produced since last read+clear operation */
