@@ -26,7 +26,9 @@
 #else
 #include <linux/time.h>
 #endif
-#include <linux/ion.h>
+
+/* modify for 4125 baseline */
+#include <linux/msm_ion.h>
 
 #define BIT(nr)   (1UL << (nr))
 
