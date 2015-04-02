@@ -117,7 +117,8 @@ static void notify_netlink_uevent(const char *iface, struct idletimer_tg *timer)
 	char iface_msg[NLMSG_MAX_SIZE];
 	char state_msg[NLMSG_MAX_SIZE];
 	char timestamp_msg[NLMSG_MAX_SIZE];
-	char *envp[] = { iface_msg, state_msg, timestamp_msg, NULL };
+	char uid_msg[NLMSG_MAX_SIZE];
+	char *envp[] = { iface_msg, state_msg, timestamp_msg, uid_msg, NULL };
 	int res;
 	struct timespec ts;
 	uint64_t time_ns;
@@ -188,7 +189,7 @@ static ssize_t idletimer_tg_show(struct kobject *kobj, struct attribute *attr,
 		return sprintf(buf, "%u\n",
 			       jiffies_to_msecs(expires - now) / 1000);
 
-	if (timer && timer->send_nl_msg)
+	if (timer->send_nl_msg)
 		return sprintf(buf, "0 %d\n",
 			jiffies_to_msecs(now - expires) / 1000);
 	else
