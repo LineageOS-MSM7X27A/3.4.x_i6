@@ -2181,8 +2181,8 @@ int copy_mount_string(const void __user *data, char **where)
  * Therefore, if this magic number is present, it carries no information
  * and must be discarded.
  */
-long do_mount(const char *dev_name, const char *dir_name,
-		const char *type_page, unsigned long flags, void *data_page)
+long do_mount(char *dev_name, char *dir_name, char *type_page,
+		  unsigned long flags, void *data_page)
 {
 	struct path path;
 	int retval = 0;
@@ -2211,8 +2211,8 @@ long do_mount(const char *dev_name, const char *dir_name,
 		goto dput_out;
 
 	/* Default to relatime unless overriden */
-	//if (!(flags & MS_NOATIME))
-		//mnt_flags |= MNT_RELATIME;
+	if (!(flags & MS_NOATIME))
+		mnt_flags |= MNT_RELATIME;
 
 	/* Separate the per-mountpoint flags */
 	if (flags & MS_NOSUID)
@@ -2221,9 +2221,9 @@ long do_mount(const char *dev_name, const char *dir_name,
 		mnt_flags |= MNT_NODEV;
 	if (flags & MS_NOEXEC)
 		mnt_flags |= MNT_NOEXEC;
-	//if (flags & MS_NOATIME)
+	if (flags & MS_NOATIME)
 		mnt_flags |= MNT_NOATIME;
-	//if (flags & MS_NODIRATIME)
+	if (flags & MS_NODIRATIME)
 		mnt_flags |= MNT_NODIRATIME;
 	if (flags & MS_STRICTATIME)
 		mnt_flags &= ~(MNT_RELATIME | MNT_NOATIME);
