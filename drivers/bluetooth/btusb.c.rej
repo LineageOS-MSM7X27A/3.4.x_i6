@@ -1,0 +1,32 @@
+--- drivers/bluetooth/btusb.c
++++ drivers/bluetooth/btusb.c
+@@ -257,6 +257,9 @@
+ 			BT_ERR("%s corrupted event packet", hdev->name);
+ 			hdev->stat.err_rx++;
+ 		}
++	} else if (urb->status == -ENOENT) {
++		/* Avoid suspend failed when usb_kill_urb */
++		return;
+ 	}
+ 
+ 	if (!test_bit(BTUSB_INTR_RUNNING, &data->flags))
+@@ -342,6 +345,9 @@
+ 			BT_ERR("%s corrupted ACL packet", hdev->name);
+ 			hdev->stat.err_rx++;
+ 		}
++	} else if (urb->status == -ENOENT) {
++		/* Avoid suspend failed when usb_kill_urb */
++		return;
+ 	}
+ 
+ 	if (!test_bit(BTUSB_BULK_RUNNING, &data->flags))
+@@ -433,6 +439,9 @@
+ 				hdev->stat.err_rx++;
+ 			}
+ 		}
++	} else if (urb->status == -ENOENT) {
++		/* Avoid suspend failed when usb_kill_urb */
++		return;
+ 	}
+ 
+ 	if (!test_bit(BTUSB_ISOC_RUNNING, &data->flags))
