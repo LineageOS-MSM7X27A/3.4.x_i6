@@ -19,6 +19,7 @@
 #include <linux/module.h>
 #include <linux/netfilter/x_tables.h>
 #include <linux/netfilter/xt_qtaguid.h>
+#include <linux/ratelimit.h>
 #include <linux/skbuff.h>
 #include <linux/workqueue.h>
 #include <net/addrconf.h>
@@ -1322,19 +1323,11 @@ static void iface_stat_update_from_skb(const struct sk_buff *skb,
 	}
 
 	if (unlikely(!el_dev)) {
-<<<<<<< HEAD
-		pr_err("qtaguid[%d]: %s(): no par->in/out?!!\n",
-		       par->hooknum, __func__);
-		BUG();
-	} else if (unlikely(!el_dev->name)) {
-		pr_err("qtaguid[%d]: %s(): no dev->name?!!\n",
-=======
 		pr_err_ratelimited("qtaguid[%d]: %s(): no par->in/out?!!\n",
 		       par->hooknum, __func__);
 		BUG();
 	} else if (unlikely(!el_dev->name)) {
 		pr_err_ratelimited("qtaguid[%d]: %s(): no dev->name?!!\n",
->>>>>>> dcf9a36... net/netfilter: Sync to kk_2.7-stable
 		       par->hooknum, __func__);
 		BUG();
 	} else {

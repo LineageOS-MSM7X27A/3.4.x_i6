@@ -179,7 +179,6 @@ enum {
 	MMC_PACKED_N_IDX = -1,
 	MMC_PACKED_N_ZERO,
 	MMC_PACKED_N_SINGLE,
->>>>>>> ff092eb... drivers/mmc: Squashed updates from kk_2.7-stable
 };
 
 module_param(perdev_minors, int, 0444);

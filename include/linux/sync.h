@@ -131,7 +131,6 @@ struct sync_pt {
 	struct sync_timeline		*parent;
 	struct list_head	child_list;
 
-	struct list_head	signaled_list;
 	struct list_head	active_list;
 	struct list_head	signaled_list;
 

@@ -82,13 +82,8 @@ struct fib_rules_ops {
 	[FRA_FWMASK]	= { .type = NLA_U32 }, \
 	[FRA_TABLE]     = { .type = NLA_U32 }, \
 	[FRA_GOTO]	= { .type = NLA_U32 }, \
-<<<<<<< HEAD
- 	[FRA_UID_START]	= { .type = NLA_U32 }, \
- 	[FRA_UID_END]	= { .type = NLA_U32 }
-=======
 	[FRA_UID_START]	= { .type = NLA_U32 }, \
 	[FRA_UID_END]	= { .type = NLA_U32 }
->>>>>>> b4272f8... net: core: Support UID-based routing.
 
 static inline void fib_rule_get(struct fib_rule *rule)
 {

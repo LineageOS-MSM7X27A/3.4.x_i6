@@ -36,6 +36,7 @@
 #include <mach/msm_iomap.h>
 #include <mach/socinfo.h>
 #include <linux/sched.h>
+#include <linux/of_fdt.h>
 
 /* fixme */
 #include <asm/tlbflush.h>

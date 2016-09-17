@@ -575,11 +575,4 @@ extern struct mmc_wr_pack_stats *mmc_blk_get_packed_statistics(
 			struct mmc_card *card);
 extern void mmc_blk_init_packed_statistics(struct mmc_card *card);
 
-<<<<<<< HEAD
-=======
-#ifdef CONFIG_HUAWEI_KERNEL 
-extern ssize_t mmc_samsung_smart_handle(struct mmc_card *card, char *buf); 
-#endif
-
->>>>>>> ff092eb... drivers/mmc: Squashed updates from kk_2.7-stable
 #endif /* LINUX_MMC_CARD_H */

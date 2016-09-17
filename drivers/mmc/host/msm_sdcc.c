@@ -4273,7 +4273,6 @@ static int msmsdcc_notify_load(struct mmc_host *mmc, enum mmc_load state)
 	}
 out:
 	return err;
->>>>>>> ff092eb... drivers/mmc: Squashed updates from kk_2.7-stable
 }
 
 static const struct mmc_host_ops msmsdcc_ops = {
