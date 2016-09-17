@@ -108,12 +108,10 @@ enum pageflags {
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 	PG_compound_lock,
 #endif
-<<<<<<< HEAD
+
 #ifdef CONFIG_KSM_CHECK_PAGE
 	PG_ksm_scan0,		/* page has been scanned by even KSM cycle */
 #endif
-=======
->>>>>>> ba3c414... mm: pass readahead info down to the i/o scheduler
 	PG_readahead,		/* page in a readahead window */
 	__NR_PAGEFLAGS,
 #ifdef CONFIG_KSM_CHECK_PAGE
