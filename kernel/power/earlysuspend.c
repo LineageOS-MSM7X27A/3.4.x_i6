@@ -141,10 +141,7 @@ static void early_suspend(struct work_struct *work)
 			pos->suspend(pos);
 		}
 	}
-<<<<<<< HEAD
-=======
 
->>>>>>> 767f578... *squashing some fixes and reverts*
 	mutex_unlock(&early_suspend_lock);
 
 	suspend_sys_sync_queue();
@@ -170,15 +167,8 @@ static void late_resume(struct work_struct *work)
 	ktime_t starttime = ktime_get();
 
 	mutex_lock(&early_suspend_lock);
-<<<<<<< HEAD
-#ifdef CONFIG_MSM_SM_EVENT
-	sm_set_system_state (SM_STATE_LATERESUME);
-	sm_add_event(SM_POWER_EVENT | SM_POWER_EVENT_LATE_RESUME, SM_EVENT_START, 0, NULL, 0);
-#endif
-=======
 	/* set sample rate and up_threshold to non-idle state value */
     
->>>>>>> 767f578... *squashing some fixes and reverts*
 	spin_lock_irqsave(&state_lock, irqflags);
 	if (state == SUSPENDED)
 	{

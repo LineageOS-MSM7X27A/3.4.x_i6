@@ -262,9 +262,6 @@ static int __die(const char *str, int err, struct pt_regs *regs)
 	struct task_struct *tsk = current;
 	static int die_counter;
 	int ret;
-#if defined(CONFIG_ARCH_MSM) && defined(CONFIG_OUTER_CACHE)
-	unsigned long paddr;
-#endif
 
 #ifdef CONFIG_LGE_CRASH_HANDLER
 	if (first_die) {

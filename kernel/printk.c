@@ -225,7 +225,7 @@ void __init setup_log_buf(int early)
 	new_log_buf_len = 0;
 	free = __LOG_BUF_LEN - log_end;
 
-	offset = start = min3(con_start, log_start, dev_start);
+	offset = start = min(con_start, log_start);
 	dest_idx = 0;
 	while (start != log_end) {
 		unsigned log_idx_mask = start & (__LOG_BUF_LEN - 1);
@@ -235,7 +235,6 @@ void __init setup_log_buf(int early)
 		dest_idx++;
 	}
 	log_start -= offset;
-	dev_start -= offset;
 	con_start -= offset;
 	log_end -= offset;
 	raw_spin_unlock_irqrestore(&logbuf_lock, flags);
@@ -543,44 +542,6 @@ SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)
 	return do_syslog(type, buf, len, SYSLOG_FROM_CALL);
 }
 
-int dev_read_kmsg(char __user *buf, int len)
-{
-	int error = -EINVAL;
-	unsigned i;
-	char c;
-
-	if (!buf || len < 0)
-		goto out;
-	error = 0;
-	if (!len)
-		goto out;
-	if (!access_ok(VERIFY_WRITE, buf, len)) {
-		error = -EFAULT;
-		goto out;
-	}
-	error = wait_event_interruptible(dev_wait,
-						(dev_start - log_end));
-	if (error)
-		goto out;
-	i = 0;
-	raw_spin_lock_irq(&logbuf_lock);
-	while (!error && (dev_start != log_end) && i < len) {
-		c = LOG_BUF(dev_start);
-		dev_start++;
-		raw_spin_unlock_irq(&logbuf_lock);
-		error = __put_user(c,buf);
-		buf++;
-		i++;
-		cond_resched();
-		raw_spin_lock_irq(&logbuf_lock);
-	}
-	raw_spin_unlock_irq(&logbuf_lock);
-	if (!error)
-		error = i;
-out:
-	return error;
-}
-
 #ifdef	CONFIG_KGDB_KDB
 /* kdb dmesg command needs access to the syslog buffer.  do_syslog()
  * uses locks so it cannot be used during debugging.  Just tell kdb
@@ -775,8 +736,6 @@ static void emit_log_char(char c)
 		log_start = log_end - log_buf_len;
 	if (log_end - con_start > log_buf_len)
 		con_start = log_end - log_buf_len;
-	if (log_end - dev_start > log_buf_len)
-		dev_start = log_end - log_buf_len;
 	if (logged_chars < log_buf_len)
 		logged_chars++;
 }
@@ -1446,7 +1405,6 @@ again:
 	for ( ; ; ) {
 		raw_spin_lock_irqsave(&logbuf_lock, flags);
 		wake_klogd |= log_start - log_end;
-		wake_devread |= dev_start - log_end;
 		if (con_start == log_end)
 			break;			/* Nothing to print */
 		_con_start = con_start;
