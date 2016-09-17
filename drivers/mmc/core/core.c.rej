@@ -1,0 +1,10 @@
+--- drivers/mmc/core/core.c
++++ drivers/mmc/core/core.c
+@@ -3162,6 +3162,7 @@
+ 	switch (mode) {
+ 	case PM_HIBERNATION_PREPARE:
+ 	case PM_SUSPEND_PREPARE:
++	case PM_RESTORE_PREPARE:
+ 		if (host->card && mmc_card_mmc(host->card)) {
+ 			mmc_claim_host(host);
+ 			err = mmc_stop_bkops(host->card);
