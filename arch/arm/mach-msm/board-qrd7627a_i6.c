@@ -531,29 +531,12 @@ static int __init reserve_adsp_size_setup(char *p)
 
 early_param("reserve_adsp_size", reserve_adsp_size_setup);
 
-static u32 msm_calculate_batt_capacity(u32 current_voltage);
-
 static struct msm_psy_batt_pdata msm_psy_batt_data = {
 	.voltage_min_design     = 2800,
 	.voltage_max_design     = 4300,
 	.avail_chg_sources      = AC_CHG | USB_CHG | UNKNOWN_CHG,
 	.batt_technology        = POWER_SUPPLY_TECHNOLOGY_LION,
-	.calculate_capacity     = &msm_calculate_batt_capacity,
 };
-
-static u32 msm_calculate_batt_capacity(u32 current_voltage)
-{
-	u32 low_voltage	 = msm_psy_batt_data.voltage_min_design;
-	u32 high_voltage = msm_psy_batt_data.voltage_max_design;
-
-	if (current_voltage <= low_voltage)
-		return 0;
-	else if (current_voltage >= high_voltage)
-		return 100;
-	else
-		return (current_voltage - low_voltage) * 100
-			/ (high_voltage - low_voltage);
-}
 
 static struct platform_device msm_fastboot_device = {
 	.name               = "fastboot",

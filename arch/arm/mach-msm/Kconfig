@@ -2654,4 +2654,11 @@ config BRICKED_HOTPLUG
  	  This enables kernel based multi core control.
  	  (up/down hotplug based on load)
 
+config MSM_BATTERY_CHG_LEGACY
+	tristate "MSM battery Charger Legacy RPC"
+	depends on ARCH_MSM
+	default n
+	help
+	  Say Y to enable support for the Legacy battery RPC
+
 endif
