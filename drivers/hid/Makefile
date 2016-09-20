@@ -1,6 +1,7 @@
 #
 # Makefile for the HID driver
 #
+
 hid-y			:= hid-core.o hid-input.o
 
 ifdef CONFIG_DEBUG_FS

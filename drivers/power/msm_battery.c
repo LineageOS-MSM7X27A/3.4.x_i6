@@ -728,6 +728,7 @@ static void msm_batt_update_psy_status(void)
 		 battery_voltage, battery_temp,
 		 reply_charger.is_charging, reply_charger.is_charging_complete,
 		 reply_charger.is_charging_failed);
+#else
 	pr_info("BATT: rcvd: %d, %d, %d, %d; %d, %d\n",
 		 charger_status, charger_type, battery_status,
 		 battery_level, battery_voltage, battery_temp);
@@ -1467,11 +1468,11 @@ static u32 msm_batt_capacity(u32 current_voltage)
 		}
 	}
 	if (batt_cap_type == BATT_CAP_MODEM) {
-		if (high_voltage == BATTERY_HIGH) {
+		if (high_voltage == QCOM_BATTERY_HIGH) {
 			if (msm_batt_info.qcom_battery_capacity > 0) {
-				current_voltage = ((high_voltage - BATTERY_LOW) *
+				current_voltage = ((high_voltage - QCOM_BATTERY_LOW) *
 				                    msm_batt_info.qcom_battery_capacity) / 100;
-				current_voltage += BATTERY_LOW;
+				current_voltage += QCOM_BATTERY_LOW;
 			} else
 			if (current_voltage > msm_batt_info.qcom_battery_voltage_min) {
 				current_voltage = msm_batt_info.qcom_battery_voltage_min;
